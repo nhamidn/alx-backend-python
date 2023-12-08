@@ -2,6 +2,6 @@
 """Concat Module"""
 
 
-def concat(a: str, b: str) -> str:
+def concat(str1: str, str2: str) -> str:
     """Concatenate two strings."""
-    return a + b
+    return str1 + str2
