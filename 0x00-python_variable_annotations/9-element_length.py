@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""make_multiplier Module"""
+"""element_length Module"""
 from typing import Iterable, Sequence, List, Tuple, Union
 
 
