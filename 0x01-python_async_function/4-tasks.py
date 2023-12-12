@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+"""4-tasks module."""
 import asyncio
 from typing import List
 import random
