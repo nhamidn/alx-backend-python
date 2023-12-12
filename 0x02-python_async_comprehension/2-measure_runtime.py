@@ -7,7 +7,7 @@ from typing import List
 async_comprehension = __import__('1-async_comprehension').async_comprehension
 
 
-async def measure_runtime() -> List[float]:
+async def measure_runtime() -> float:
     """Coroutine that executes coroutine 4 times in parallel."""
     start_time = time.time()
     await asyncio.gather(
