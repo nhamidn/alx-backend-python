@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" test_utils module.
+"""test_client module.
 """
 
 import unittest
@@ -22,7 +22,7 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         method to test that GithubOrgClient.org returns the correct value.
         """
-        mock_response = {"login": org_name, "id": 12345}
+        mock_response = {"login": org_name}
         mock_get_json.return_value = mock_response
         github_org_client = GithubOrgClient(org_name)
         response = github_org_client.org
