@@ -3,7 +3,7 @@
 """
 
 import unittest
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, Mock, MagicMock, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 from typing import Dict, Tuple, Union, Any
@@ -28,6 +28,20 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(response, resp)
         expected_url = f"https://api.github.com/orgs/{org_name}"
         mock_get_json.assert_called_once_with(expected_url)
+
+    def test_public_repos_url(self):
+        """Method that test _public_repos_url returns the expected URL."""
+        mock_org_pl = {
+            "repos_url": "https://api.github.com/orgs/test-org/repos"
+        }
+        expected_result = "https://api.github.com/orgs/test-org/repos"
+
+        with patch.object(GithubOrgClient, "org",
+                          new_callable=PropertyMock) as mocked_org:
+            mocked_org.return_value = mock_org_pl
+            client = GithubOrgClient("test-org")
+            result = client._public_repos_url
+            self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':
