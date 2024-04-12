@@ -7,6 +7,7 @@ from unittest.mock import patch, Mock, MagicMock, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
 from typing import Dict, Tuple, Union, Any
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -18,12 +19,14 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch(
         "client.get_json",
     )
-    def test_org(self, org: str, resp: Dict, mocked_fxn: MagicMock) -> None:
+    def test_org(self, org: str, expected_response: Dict,
+                 mocked_function: MagicMock) -> None:
         """Function that tests GithubOrgClient.org."""
-        mocked_fxn.return_value = MagicMock(return_value=resp)
-        gh_org_client = GithubOrgClient(org)
-        self.assertEqual(gh_org_client.org(), resp)
-        mocked_fxn.assert_called_once_with(
+        mocked_function.return_value = MagicMock(
+            return_value=expected_response)
+        goclient = GithubOrgClient(org)
+        self.assertEqual(goclient.org(), expected_response)
+        mocked_function.assert_called_once_with(
             "https://api.github.com/orgs/{}".format(org)
         )
 
