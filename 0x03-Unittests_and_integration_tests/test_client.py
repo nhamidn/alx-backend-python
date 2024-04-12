@@ -17,17 +17,17 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch('client.get_json')
     def test_org(
-            self, org_name: str, resp: Dict, mock_get_json: Mock
+            self, org: str, resp: Dict, mocked_fn: Mock
             ) -> None:
         """
         method to test that GithubOrgClient.org returns the correct value.
         """
-        mock_get_json.return_value = MagicMock(return_value=resp)
-        github_org_client = GithubOrgClient(org_name)
-        response = github_org_client.org()
-        self.assertEqual(response, resp)
-        expected_url = "https://api.github.com/orgs/{}".format(org_name)
-        mock_get_json.assert_called_once_with(expected_url)
+        mocked_fn.return_value = MagicMock(return_value=resp)
+        gh_org_client = GithubOrgClient(org)
+        self.assertEqual(gh_org_client.org(), resp)
+        mocked_fn.assert_called_once_with(
+            "https://api.github.com/orgs/{}".format(org)
+        )
 
     def test_public_repos_url(self):
         """Method that test _public_repos_url returns the expected URL."""
