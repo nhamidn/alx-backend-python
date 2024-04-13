@@ -4,10 +4,10 @@
 
 import unittest
 from unittest.mock import patch, Mock, MagicMock, PropertyMock
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from typing import Dict, Tuple, Union, Any
-from fixtures import TEST_PAYLOAD
+import fixtures
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -69,6 +69,51 @@ class TestGithubOrgClient(unittest.TestCase):
         """Function that tests GithubOrgClient.has_license."""
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
+
+
+@parameterized_class([
+    {
+        'org_payload': fixtures.TEST_PAYLOAD[0][0],
+        'repos_payload': fixtures.TEST_PAYLOAD[0][1],
+        'expected_repos': fixtures.TEST_PAYLOAD[0][2],
+        'apache2_repos': fixtures.TEST_PAYLOAD[0][3],
+    },
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Class that tests public_repos in an integration test."""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up for patching."""
+        cls.get_patcher = patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+
+        def side_effect(*args, **kwargs):
+            url = args[0]
+            if url == cls.org_payload['repos_url']:
+                return Mock(status_code=200, json=lambda: cls.repos_payload)
+            elif url.startswith('https://api.github.com/orgs/'):
+                return Mock(status_code=200, json=lambda: cls.org_payload)
+            else:
+                raise ValueError("Unhandled URL")
+
+        cls.mock_get.side_effect = side_effect
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up after testing."""
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Test GithubOrgClient.public_repos."""
+        client = GithubOrgClient('google')
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """Test GithubOrgClient.public_repos with license filtering."""
+        client = GithubOrgClient('google')
+        self.assertEqual(client.public_repos(license="apache-2.0"),
+                         self.apache2_repos)
 
 
 if __name__ == '__main__':
