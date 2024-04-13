@@ -44,6 +44,24 @@ class TestGithubOrgClient(unittest.TestCase):
             result = client._public_repos_url
             self.assertEqual(result, expected_result)
 
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json):
+        """Function that tests GithubOrgClient.public_repos."""
+        mock_repos_payload = [
+            {"name": "pyccel", "license": {"key": "mit"}},
+        ]
+        mock_get_json.return_value = mock_repos_payload
+        mock_repos_url = 'https://api.github.com/orgs/pyccel/repos'
+        expected_repos = ['pyccel']
+        with patch('client.GithubOrgClient._public_repos_url',
+                   new_callable=PropertyMock) as mock_public_repos_url:
+            mock_public_repos_url.return_value = mock_repos_url
+            client = GithubOrgClient("pyccel")
+            repos = client.public_repos()
+            self.assertEqual(repos, expected_repos)
+            mock_get_json.assert_called_once_with(mock_repos_url)
+            mock_public_repos_url.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()
