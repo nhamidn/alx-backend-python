@@ -30,7 +30,7 @@ class TestGithubOrgClient(unittest.TestCase):
             "https://api.github.com/orgs/{}".format(org)
         )
 
-    def test_public_repos_url(self):
+    def test_public_repos_url(self) -> None:
         """Method that test _public_repos_url returns the expected URL."""
         mock_org_pl = {
             "repos_url": "https://api.github.com/orgs/test-org/repos"
@@ -45,7 +45,7 @@ class TestGithubOrgClient(unittest.TestCase):
             self.assertEqual(result, expected_result)
 
     @patch('client.get_json')
-    def test_public_repos(self, mock_get_json):
+    def test_public_repos(self, mock_get_json: MagicMock) -> None:
         """Function that tests GithubOrgClient.public_repos."""
         mock_repos_payload = [
             {"name": "pyccel", "license": {"key": "mit"}},
